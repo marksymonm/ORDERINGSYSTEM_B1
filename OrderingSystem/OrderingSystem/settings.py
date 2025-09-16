@@ -110,7 +110,7 @@ WSGI_APPLICATION = 'OrderingSystem.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get("DB_NAME", "orderingsystem"),
+        'NAME': os.environ.get("DB_NAME", "foodbusiness"),
         'USER': os.environ.get("DB_USER", "root"),
         'PASSWORD': os.environ.get("DB_PASSWORD", ""),
         'HOST': os.environ.get("DB_HOST", "127.0.0.1"),
