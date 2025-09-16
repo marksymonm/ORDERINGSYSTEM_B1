@@ -86,5 +86,6 @@ urlpatterns = [
     path('reset_customization/', views.reset_customization, name='reset_customization'),
     path("upload-logo/", views.upload_logo, name="upload_logo"),
     path("toggle-shop-status/", views.toggle_shop_status, name="toggle_shop_status"),
+    path("test-db/", test_db_connection, name="test_db"),
 ]
 
