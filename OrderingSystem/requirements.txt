@@ -52,7 +52,8 @@ daphne
 channels
 channels-redis
 psycopg2-binary
-twisted[tls,http2]
+uvicorn[standard]
+
 
 
 
