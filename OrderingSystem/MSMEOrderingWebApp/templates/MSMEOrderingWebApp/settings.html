@@ -1,0 +1,2287 @@
+{% extends 'MSMEOrderingWebApp/business_owner_base.html' %}
+
+{% block title %}Settings{% endblock %}
+
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Settings</title>
+
+     <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Abel&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Gloock:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Signika+Negative:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <style>
+
+        :root {
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --info-color: #06b6d4;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --primary-color: {{ customization.primary_color|default:'#FF5733' }};
+            --secondary-color: {{ customization.secondary_color|default:'#FF5733' }};
+            --accent-color: {{ customization.accent_color|default:'#FF5733' }};
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        {% if customization.general_background_type == 'solid' %}
+            body {
+                background-color: {{ customization.general_solid_color|default:"#ffffff" }};
+            }
+        {% elif customization.general_background_type == 'gradient' %}
+            body {
+                background: linear-gradient(
+                    {{ customization.general_gradient_direction|default:"to right" }},
+                    {{ customization.general_gradient_color_1|default:"#ffffff" }},
+                    {{ customization.general_gradient_color_2|default:"#000000" }}
+                    {% if customization.general_gradient_color_3 %}
+                        , {{ customization.general_gradient_color_3 }}
+                    {% endif %}
+                );
+            }
+        {% elif customization.general_background_type == 'image' %}
+            body {
+                background-image: url("{{ customization.general_background_image.url }}");
+            }
+        {% endif %}
+        
+
+        /* business profile css starting */
+
+        .main-container {
+            padding: 0%;
+        }
+
+        .settings-card {
+            padding: 0;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 24px;
+            box-shadow: var(--shadow-xl);
+            /* overflow: hidden; */
+            margin-bottom: 2rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .settings-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .card-header {
+            background: white;
+            padding: 25px;
+            border-radius: 24px;
+            border-bottom: 1px solid var(--primary-color);
+            position: sticky;
+            top: 70px;
+            left: 0;
+            right: 0;
+            z-index: 1020;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+            overflow: hidden;  /* Added to clip child elements to radius */
+        }
+
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 12px;
+            border-radius: 24px 24px 0 0;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+
+
+        .card-title {    
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.075); /* Apply text shadow */
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            position: relative;
+            z-index: 1;
+            font-family: "{{ customization.header_font_family|default:"Arial" }}";
+            font-size: {% if customization.header_font_size and customization.header_font_size|add:'0' <= 30 %}{{ customization.header_font_size|default:25 }}{% else %}30{% endif %}px;
+            color: {{ customization.header_font_color|default:"#000000" }};
+            font-weight: {% if customization.header_font_style == 'bold' or customization.header_font_style == 'bolditalic' %}800{% else %}normal{% endif %};
+            font-style: {% if customization.header_font_style == 'italic' or customization.header_font_style == 'bolditalic' %}italic{% else %}normal{% endif %};
+        }
+
+        .card-body {
+            border-radius: 24px;
+            padding: 2.5rem;
+            position: relative;
+            z-index: 1; /* Ensure card content is below the buttons */
+        }
+
+        .section-divider {
+            height: 2px;
+            background: var(--primary-color);
+            margin: 2.5rem 0;
+            position: relative;
+        }
+        /* Logo Upload Section */
+        .logo-container {
+            width: 100%;
+            max-width: 100%; /* Prevents overflows */
+            position: relative;
+        }
+
+        .square-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 100%; /* Creates a 1:1 aspect ratio */
+            overflow: hidden;  /* Prevents overflow outside the container */
+        }
+
+        .logo-upload-area {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 3px dashed var(--primary-color);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: transparent;
+            overflow: hidden;
+        }
+
+        .logo-upload-area:hover {
+            transform: scale(1.01);
+        }
+
+        .logo-upload-area.dragover {
+            border-color: var(--accent-color);
+            background: linear-gradient(135deg, #ecfeff 0%, #cffafe 100%);
+        }
+
+        .upload-placeholder {
+            text-align: center;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .upload-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            opacity: 0.7;
+        }
+
+        .logo-preview-wrapper {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; 
+        }
+
+        .logo-preview {
+            width: auto;          
+            height: 100%;          
+            object-fit: cover;    
+            object-position: center;
+            display: block;
+            margin: 0 auto;      
+        }
+
+
+        
+        .upload-placeholder h4 {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .logo-file-input {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* Form Controls */
+        .form-label {
+            margin-bottom: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            font-weight: 600;
+            font-family: '{{ customization.header_font_family|default:"Montserrat" }}';
+            font-size: {% if customization.body_font_size and customization.body_font_size|add:'0' <= 15 %}{{ customization.body_font_size|default:12 }}{% else %}15{% endif %}px;
+            color: {{ customization.header_font_color|default:"#000000" }};
+        }
+
+        
+        .form-control, .form-select {
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            border-color: var(--primary-color);
+            color: {{ customization.body_font_color|default:"#000000" }};
+            font-family: '{{ customization.body_font_family|default:"Arial" }}';
+            font-size: {% if customization.body_font_size and customization.body_font_size|add:'0' <= 16 %}{{ customization.body_font_size|default:12 }}{% else %}16{% endif %}px;
+            border-width: {{ customization.input_border_width|default:1 }}px; 
+            border-style: {{ customization.input_border_style|default:'solid' }};
+            border-radius: {{ customization.input_rounded_corner|default:1 }}px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--secondary-color);
+            box-shadow: none;
+        }
+
+        .form-control::placeholder {
+            color: var(--accent-color);
+            opacity: 0.8;
+        }
+
+        /* Checkbox Groups */
+        .service-section {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            border-bottom: 2px solid var(--primary-color);
+            border-top: 2px solid var(--primary-color);
+            position: relative;
+            overflow: hidden;
+
+        }
+
+        .service-title {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: "{{ customization.header_font_family|default:"Arial" }}";
+            font-size: {% if customization.header_font_size and customization.header_font_size|add:'0' > 25 %}25
+            {% else %}{{ customization.header_font_size|default:24 }}{% endif %}px;
+            color: {{ customization.header_font_color|default:"#000000" }};
+            font-weight: {% if customization.header_font_style == 'bold' or customization.header_font_style == 'bolditalic' %}700{% else %}normal{% endif %};
+            font-style: {% if customization.header_font_style == 'italic' or customization.header_font_style == 'bolditalic' %}italic{% else %}normal{% endif %};
+        }
+
+        .service-title i {
+            color: {{ customization.header_font_color|default:"#000000" }};
+        }
+        
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0.75rem 1rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .form-switch {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-left: 20px;
+            margin-bottom: 1rem;
+            padding: 0.75rem 1rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .form-check-label {
+            font-weight: 500;
+            font-family: "{{ customization.header_font_family|default:"Arial" }}";
+            color: {{ customization.header_font_color|default:"#000000" }};
+            font-size: {% if customization.body_font_size and customization.body_font_size|add:'0' <= 16 %}{{ customization.body_font_size|default:12 }}{% else %}16{% endif %}px;
+        }
+
+        /* ✅ Checked State */
+        .form-check-input:checked {
+            background-color: {{ customization.header_font_color|default:"#000000" }};
+            
+        }
+        /* Change container background if checked */
+        .form-check-input:checked ~ .form-check-label {
+            font-weight: 700;
+            color: {{ customization.header_font_color|default:"#000000" }};
+        }
+
+        /* Optional: different background for the container when checked */
+        .form-check-input:checked:focus-visible + .form-check-label,
+        .form-check-input:checked:focus + .form-check-label {
+            outline: none;
+        }
+
+        .custom-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            font-family: {{ customization.body_font_family|default:"Montserrat" }};
+            color: {{ customization.body_font_color|default:"#000000" }};
+        }
+
+        .custom-checkbox:hover {
+            border-color: var(--secondary-color);
+        }
+
+        /* When the checkbox is checked, apply primary color border to the container */
+        .custom-checkbox:has(input:checked) {
+            border-color: var(--primary-color);
+        }
+
+        .custom-checkbox input {
+            /* Hide default appearance */
+            appearance: none;
+            -webkit-appearance: none;
+            outline: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid {{ customization.body_font_color|default:"#000000" }};
+            border-radius: 6px;
+            margin: 0;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .custom-checkbox input:checked {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .custom-checkbox input:checked::after {
+            content: "\2713";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 16px;
+            border-color: var(--primary-color);
+        }
+
+        .custom-checkbox label {
+            line-height: 15px;
+            font-family: {{ customization.body_font_family|default:"Montserrat" }};
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Action Buttons */
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .payment-change {
+            justify-content: center;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            padding: 12px 24px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border:none;
+            margin: 0;
+            border-radius: {{ customization.button_rounded_corner|default:1 }}px;
+            font-family: {{ customization.header_font_family|default:"Montserrat" }};
+            color: {{ customization.button_text_color|default:'#ffffff' }};
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            
+        }
+
+        .payment-change i {
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+
+        .payment-change:hover {
+            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+            transform: translateY(-4px); /* Lift effect */
+        }
+
+        .payment-change:active {
+            transform: translateY(0); /* Remove lift effect on click */
+        }
+
+        .save-button {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            transition: all 0.3s ease-in-out;
+            background: transparent;
+            color:var(--primary-color);
+            font-size: 1rem;
+            font-weight: 600;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Apply text shadow */
+            cursor: pointer;
+            border-color: var(--primary-color);
+            border-style: solid;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: {{ customization.button_rounded_corner|default:1 }}px;
+            font-family: {{ customization.header_font_family|default:"Montserrat" }};
+            
+        }
+
+        .save-button:hover {
+            border: none;
+            text-shadow: 2px 2px 4px rrgba(0, 0, 0, 0.527); /* Apply text shadow */
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            color: {{ customization.button_text_color|default:'#ffffff' }};
+        }
+
+        .save-button i {
+            font-size: 1.2rem;
+        }
+
+
+        /* Time Range Display */
+        .time-range {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .time-separator {
+            color: var(--text-secondary);
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
+
+        /* Loading Animation */
+        .save-button-loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .save-button-loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 0.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Success Animation */
+        @keyframes success {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .success-animation {
+            animation: success 0.6s ease-in-out;
+        }
+
+
+        /* customization css start */
+
+        .customize-card {
+            background: rgb(255, 255, 255);
+            border-radius: 24px;
+            /*overflow: hidden;*/
+        }
+
+        .custom-card {
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 24px;
+            /*overflow: hidden;*/
+            border-bottom: 5px solid var(--primary-color);
+            border-top: 5px solid var(--primary-color);
+            border-left: none;
+            border-right: none;
+            margin-bottom: 2px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .custom-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .card2-header {
+            background: white;
+            padding: 15px;
+            border-radius: 24px 24px 0 0;
+            border-bottom: 1px solid var(--primary-color);
+            position: sticky;
+            top: 70px;  /* adjust if needed */
+            left: 0;
+            right: 0;
+            z-index: 1020;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+            overflow: hidden;  /* clip any overflowing content */
+        }
+        
+        .card2-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 12px;
+            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+        }
+
+        .card1-header {
+            color: var(--primary-color);
+            background: white;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid  var(--primary-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card1-header h5 {
+            font-size: {% if customization.header_font_size and customization.header_font_size|add:'0' > 20 %}20
+            {% else %}{{ customization.header_font_size|default:15 }}{% endif %}px;
+            font-family: {{ customization.header_font_family|default:"Montserrat" }};
+            color: {{ customization.header_font_color|default:"#000000" }};
+            font-weight: {% if customization.header_font_style == 'bold' or customization.header_font_style == 'bolditalic' %}700{% else %}normal{% endif %};
+            font-style: {% if customization.header_font_style == 'italic' or customization.header_font_style == 'bolditalic' %}italic{% else %}normal{% endif %};
+        }
+
+        .card2-body h6 {
+            text-transform: uppercase;
+            font-family: "{{ customization.header_font_family|default:"Arial" }}";
+            font-size: {% if customization.header_font_size and customization.header_font_size|add:'0' <= 18 %}{{ customization.header_font_size|default:15 }}{% else %}18{% endif %}px;
+            color: {{ customization.header_font_color|default:"#000000" }};
+            font-weight: {% if customization.header_font_style == 'bold' or customization.header_font_style == 'bolditalic' %}700{% else %}normal{% endif %};
+            font-style: {% if customization.header_font_style == 'italic' or customization.header_font_style == 'bolditalic' %}italic{% else %}normal{% endif %};
+        }
+
+        .card2-title {
+            margin-top: 20px;
+            margin-left: 15px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            position: relative;
+            z-index: 1;
+            font-family: {{ customization.header_font_family|default:"Montserrat" }};
+            font-size: {% if customization.header_font_size and customization.header_font_size|add:'0' <= 30 %}{{ customization.header_font_size|default:25 }}{% else %}30{% endif %}px;
+            color: {{ customization.header_font_color|default:"#000000" }};
+            font-weight: {% if customization.header_font_style == 'bold' or customization.header_font_style == 'bolditalic' %}800{% else %}normal{% endif %};
+            font-style: {% if customization.header_font_style == 'italic' or customization.header_font_style == 'bolditalic' %}italic{% else %}normal{% endif %};
+        }
+
+        .card2-body {
+            padding: 0.5rem;
+            position: relative;
+            z-index: 1; /* Ensure card content is below the buttons */
+        }
+        
+
+        /* Form Controls */
+        .form2-label {
+            margin-bottom: 1px;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            font-weight: 600;
+            font-family: '{{ customization.header_font_family|default:"Montserrat" }}';
+            font-size: {% if customization.body_font_size and customization.body_font_size|add:'0' > 15 %}15    
+            {% else %}{{ customization.body_font_size|default:14 }}{% endif %}px;
+            color: {{ customization.header_font_color|default:"#000000" }};
+        }
+
+        /* Form Controls */
+        .form3-label {
+            margin-bottom: 1px;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            font-weight: 600;
+            font-family: '{{ customization.body_font_family|default:"Montserrat" }}';
+            font-size: {% if customization.body_font_size and customization.body_font_size|add:'0' > 13 %}13
+            {% else %}{{ customization.body_font_size|default:10 }}{% endif %}px;
+            color: {{ customization.body_font_color|default:"#000000" }};
+        }
+
+        .form2-control, .form2-select {
+            padding: 8px;
+            width: 100%;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            color: {{ customization.body_font_color|default:"#000000" }};
+            font-family: '{{ customization.body_font_family|default:"Arial" }}';
+            font-size: {% if customization.body_font_size and customization.body_font_size|add:'0' > 16 %}16{% else %}{{ customization.body_font_size|default:14 }}{% endif %}px;
+            border-width: {{ customization.input_border_width|default:1 }}px; 
+            border-style: {{ customization.input_border_style|default:'solid' }};
+            border-color: var(--primary-color);
+            border-radius: {{ customization.input_rounded_corner|default:1 }}px;
+        }
+
+        .form2-input {
+            padding: 8px;
+            width: 100%;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: {{ customization.body_font_color|default:"#000000" }};
+            font-family: '{{ customization.body_font_family|default:"Arial" }}';
+            font-size: {% if customization.body_font_size and customization.body_font_size|add:'0' > 16 %}16{% else %}{{ customization.body_font_size|default:14 }}{% endif %}px;
+            border-width: {{ customization.input_border_width|default:1 }}px; 
+            border-style: {{ customization.input_border_style|default:'solid' }};
+            border-color: var(--primary-color);
+            border-radius: {{ customization.input_rounded_corner|default:1 }}px;
+        }
+
+        /* Hover & Focus styles for form2 inputs */
+        .form2-input:hover,
+        .form2-input:focus,
+        .form2-control:hover,
+        .form2-control:focus,
+        .form2-select:hover,
+        .form2-select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 0, 238, 0.1);
+            border-color: {{ customization.secondary_color|default:'#000000' }};
+        }
+
+        .input-group {
+            width: 100%;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center; /* Ensures the text and color input align correctly */
+            gap: 5px; /* Adds space between the input fields */ 
+            border-radius: {{ customization.input_rounded_corner|default:1 }}px;
+        }
+
+        .input-group .form-control {
+            border-radius: {{ customization.input_rounded_corner|default:1 }}px; /* Slightly rounded corners for the form controls */
+            padding: 8px; /* Adds padding inside the input fields */
+        }
+
+        .input-group .input-group-text {
+            border-radius: {{ customization.input_rounded_corner|default:1 }}px; /* Round corners for the text part */
+            background: var(--primary-color); /* Primary color for the background of the text */
+            color: white; /* White text for the symbol */
+            padding: 8px 15px; /* Padding for the text part */
+        }
+
+        .form2-control:focus, .form2-select:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            background: white;
+        }
+
+        .form2-control::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.8;
+        }
+
+        /* Style for the btn-group */
+        .btn-group {
+            display: flex;
+            justify-content: space-between; /* Space out the buttons evenly */
+            width: 100%; /* Ensure the buttons take the full width */
+        }
+
+        /* Style for individual buttons */
+        .btn-group .btn {
+            border-radius: 12px; /* Rounded corners for the buttons */
+            padding: 10px 15px; /* Padding inside each button */
+            font-size: 0.875rem; /* Font size for the button text */
+            transition: all 0.3s ease; /* Smooth transition for hover and active states */
+            flex-grow: 1; /* Buttons will grow to fill the space equally */
+        }
+
+        /* Default button style */
+        .btn-group .btn-outline-primary {
+            border-color: var(--primary-color); /* Use the primary color for borders */
+            color: var(--primary-color); /* Use the primary color for text */
+            background-color: transparent; /* Transparent background */
+        }
+
+        /* Hover effect */
+        .btn-group .btn-outline-primary:hover {
+            background-color: var(--primary-color); /* Background color on hover */
+            color: white; /* White text color on hover */
+        }
+
+        /* Active state style for when the radio button is checked */
+        .btn-group .btn-check:checked + .btn {
+            background-color: var(--primary-color); /* Primary color background */
+            color: white; /* White text */
+        }
+
+        /* Styling for Bold and Italic buttons */
+        .btn-group .fw-bold {
+            font-weight: bold; /* Make text bold for the Bold button */
+        }
+
+        .btn-group .fst-italic {
+            font-style: italic; /* Make text italic for the Italic button */
+        }
+
+        /* Optional: Adding margin between the buttons */
+        .btn-group .btn + .btn {
+            margin-left: 5px; /* Space between buttons */
+        }
+
+        /* Styling the Nav Tabs */
+        /* Styling the Nav Tabs */
+        #backgroundTabs {
+            margin-top: -30px;
+            display: flex; /* Makes the tabs align horizontally */
+            overflow-x: auto; /* Enables horizontal scrolling */
+            margin-bottom: 10px; /* Adds space below the tabs */
+            padding: 2px; /* Removes default padding */
+            list-style: none; /* Removes default list styling */
+            flex-wrap: nowrap; /* Prevents wrapping, making tabs stay in one line */
+            white-space: nowrap; /* Prevents the text from breaking into multiple lines */
+        }
+
+        /* Styling individual nav items (tab buttons) */
+        #backgroundTabs .nav-item {
+            margin-right: 5px; /* Adds space between the tabs horizontally */
+        }
+
+        /* Styling the nav links (the clickable tabs) */
+        #backgroundTabs .nav-link {
+            border: 2px solid var(--primary-color);
+            border-bottom: none;
+            padding: 10px 20px; /* Adds padding for clickable area */
+            font-size: 1rem; /* Ensures text is a consistent size */
+            color: #555; /* Default color for inactive tabs */
+            background-color: #f8f9fa; /* Light background for tabs */
+            border-radius: 5px; /* Rounded corners */
+            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for hover and active states */
+            text-transform: capitalize; /* Makes the tab text title case */
+            cursor: pointer; /* Makes it clear the tab is clickable */
+        }
+
+        /* Active tab style */
+        #backgroundTabs .nav-link.active {
+            color: var(--primary-color); /* Active tab text color */
+            font-weight: bold; /* Makes the active tab text bold */
+            border-radius: 8px; /* Keeps rounded corners */
+        }
+
+        /* Hover effect on tabs */
+        #backgroundTabs .nav-link:hover {
+            background-color: #e9ecef; /* Adds a subtle background on hover */
+            color: var(--primary-color); /* Changes text color on hover */
+        }
+
+        image-upload-container {
+            cursor: pointer;
+        }
+
+        .upload-area {
+            position: relative;
+            min-height: 200px;
+            border: 2px dashed var(--primary-color);
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .upload-area:hover {
+            border-color: var(--secondary-color);
+            background-color: #e7f3ff;
+        }
+
+        .upload-area.drag-over {
+            border-color: var(--secondary-color);
+            background-color: #e7f3ff;
+            transform: scale(1.02);
+        }
+
+        .upload-placeholder {
+            text-align: center;
+            color: #6c757d;
+            transition: all 0.3s ease;
+        }
+
+        .preview-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        #homepage .preview-image {
+            width: 900px;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 8px; /* optional */
+        }
+
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .upload-area:hover .image-overlay {
+            opacity: 1;
+        }
+
+        .image-overlay button {
+            margin: 0 5px;
+        }
+
+        /* FontAwesome fallback for upload icon */
+        .fas.fa-cloud-upload-alt:before {
+            font-family: inherit;
+        }
+
+        .fas.fa-edit:before {
+            font-family: inherit;
+        }
+
+        .fas.fa-trash:before {
+            font-family: inherit;
+        }
+
+        .is-invalid {
+            border: 1px solid #dc3545 !important;  /* Bootstrap red */
+            box-shadow: 0 0 0 0.15rem rgba(220, 53, 69, 0.25);
+        }
+
+        /* Modal Modern Styling */
+        .modal-modern .modal-content {
+            font-family: {{ customization.body_font_family|default:"Montserrat" }};
+            border-radius: 16px;
+            border: none;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .modal-modern .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            font-family: {{ customization.header_font_family|default:"Montserrat" }};
+            border-bottom: 1px solid var(--accent-color);
+            padding: 1.5rem;
+        }
+
+        .modal-modern .modal-title {
+            font-weight: 700;
+            color: {{ customization.button_text_color|default:'#ffffff' }};
+            text-shadow: var(--text-shadow);
+        }
+
+        .modal-modern .modal-body {
+            padding: 1.5rem;
+        }
+
+        /* Modal Header */
+        .modal-header {
+            padding: 1rem;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        .modal-header .btn-close {
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--primary-color);
+            transition: color 0.3s ease;
+        }
+
+        .modal-header .btn-close:hover {
+            color: var(--secondary-color);
+        }
+
+        /* Input Fields Styling */
+        .modal .password-input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 1rem;
+            font-size: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--primary-color);
+        }
+
+
+        /* Password Group Container (Aligning the Input and Icon) */
+        .password-group {
+            position: relative;
+            display: flex;
+            width: 100%;
+        }
+
+        /* Styling for the Password Input */
+        .password-input {
+            width: 100%;
+            padding: 12px 15px; /* Padding with some left and right space */
+            margin-bottom: 1rem;
+            padding-right: 40px; /* Space for the icon inside the input */
+            color: {{ customization.body_font_color|default:"#000000" }};
+            font-family: '{{ customization.body_font_family|default:"Arial" }}';
+            font-size: {% if customization.body_font_size and customization.body_font_size|add:'0' > 16 %}16{% else %}{{ customization.body_font_size|default:14 }}{% endif %}px;
+            border-width: {{ customization.input_border_width|default:1 }}px; 
+            border-style: {{ customization.input_border_style|default:'solid' }};
+            border-color: {{ customization.primary_color|default:'#000000' }};
+            border-radius: {{ customization.input_rounded_corner|default:1 }}px;
+        }
+
+        /* Password Toggle Icon (Eye) Styling */
+        .password-toggle {
+            position: absolute;
+            right: 10px;  /* Adjusted position to be slightly closer */
+            top: 25px;
+            transform: translateY(-50%); /* Center the icon vertically */
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: transparent;
+            border: none;
+            padding: 0;
+            font-size: 18px; /* Adjust icon size if needed */
+        }
+
+        /* Icon Hover Effect */
+        .password-toggle i {
+            color: var(--primary-color);
+            transition: color 0.3s ease;
+        }
+
+        .password-toggle:hover i {
+            color: var(--secondary-color);
+        }
+
+        /* Focus Effect for Input */
+        .password-input:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+        }
+
+
+        .modal .password-input:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+        }
+
+        /* Modal Buttons */
+        .modal-footer button {
+            font-size: 16px;
+            padding: 12px;
+            border-radius: 8px;
+            background-color: var(--primary-color);
+            color: #fff;
+        }
+
+        .modal-footer button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-footer button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        #addServiceBtn {
+            padding:10px;
+            border-radius: 8px;
+            border: 2px solid var(--primary-color);
+            background: transparent;
+            font-family: {{ customization.header_font_family|default:"Montserrat" }};
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 14px;
+            transition: all 0.2s ease-in-out;
+        }
+
+        #addServiceBtn:enabled:hover {
+            background: var(--primary-color);
+            color: #fff;
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 767px) {
+            .card2-header .d-flex {
+                flex-direction: row; /* Keep the elements in one row on larger screens */
+                justify-content: flex-start; /* Align them to the left */
+                font-size: xx-large;
+            }
+
+            .save-button {
+                width: auto; /* Buttons will not expand to take up full width */
+            }
+            
+            body {
+                padding: 1rem 0;
+            }
+
+            .main-container {
+                padding: 0;
+            }
+
+            .card-header, .card-body {
+                padding: 1.5rem;
+            }
+
+            .card-title {
+                font-size: {% if customization.header_font_size and customization.header_font_size|add:'0' <= 20 %}{{ customization.header_font_size|default:15 }}{% else %}20{% endif %}px;
+
+            }
+
+            .action-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .save-button {
+                font-size: 0.875rem;
+                margin-top: 3px;  /* Smaller font size */
+            }
+
+            .payment-change {
+                font-size: 0.875rem;
+                padding: 10px;
+            }
+
+            .payment-change i {
+                font-size: 0.900rem;
+            }
+
+            .btn-sm {
+                font-size: 0.75rem;   /* Further decrease size on very small screens */
+                padding: 6px 12px;    /* Smaller padding for smaller screens */
+            }
+        }
+
+        @media (max-width: 800px) {
+            .main-container {
+                padding: 0 0.5rem;
+            }
+
+            .card-header, .card-body {
+                padding: 1.5rem;
+            }
+
+            /* Adjust the buttons for smaller screens */
+            .save-button {
+                font-size: 0.875rem;  /* Smaller font size */
+                width: 100%;  /* Make buttons full width */
+                margin-top: 10px;  /* Ensure space between buttons */
+            }
+
+            .payment-change {
+                font-size: 13px;  /* Smaller font size */
+                padding: 10px;
+                width: 100%;  /* Full width */
+                margin-top:0;
+                justify-content: center;  /* Ensure text and icon are centered */
+                display: flex;
+                align-items: center;
+            }
+
+            /* Ensure icons and text are well aligned */
+            .payment-change i {
+                font-size: 12px;
+                margin-right: 8px;  /* Ensure there's enough space between icon and text */
+            }
+
+            /* Adjust the action grid layout to ensure buttons stack properly */
+            .action-grid {
+                display: grid;
+                grid-template-columns: 1fr; /* Stack the buttons */
+                gap: 1rem;
+            }
+
+            .logo-preview-wrapper {
+                max-height: 100%;
+                max-width: 100%;
+            }
+
+            .action-grid {
+                grid-template-columns: 1fr; /* Stack buttons vertically */
+                gap: 1rem;
+            }
+
+            /* Flex layout adjustments for input fields */
+            .time-range {
+                flex-direction: column;
+            }
+
+            .time-separator {
+                font-size: 1rem;  /* Adjust separator font size */
+            }
+
+            .col-md-6, .col-12 {
+                width: 100%;  /* Full width for all columns */
+            }
+
+            .form-control, .form-select {
+                font-size: 0.875rem;  /* Smaller font size */
+                padding: 0.75rem 1rem;  /* Adjust padding for smaller screens */
+                width: 100%;  /* Ensure inputs take full width */
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+            }
+
+            .card-title {
+                font-size: {% if customization.header_font_size and customization.header_font_size|add:'0' <= 25 %}{{ customization.header_font_size|default:20 }}{% else %}25{% endif %}px;
+            }
+            
+            /* Adjust the grid layout */
+            .row.g-4 {
+                grid-template-columns: 1fr; /* Stack items on smaller screens */
+                gap: 10px;
+            }
+
+            /* Fix spacing for smaller screens */
+            .service-section {
+                padding: 1rem;
+                margin-bottom: 5px;
+            }
+        }
+
+    /* === General & Login background image area === */
+    #general_upload_area,
+    #login_upload_area {
+        position: relative;
+        width: 100%;             /* always fill form width */
+        height: 300px;           /* fixed height so it's not too flat */
+        border: 2px dashed var(--primary-color);
+        border-radius: 8px;
+        overflow: hidden;
+        background-color: #f8f9fa;
+    }
+
+    /* Uploaded image fills box, keeps aspect ratio */
+    #general_upload_area img.preview-image,
+    #login_upload_area img.preview-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;       /* keeps image proportions and crops overflow */
+        z-index: 2;
+    }
+
+    /* Overlay buttons */
+    #general_upload_area .image-overlay,
+    #login_upload_area .image-overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        background: rgba(0,0,0,0.4);
+        transition: opacity .3s;
+        z-index: 3;
+    }
+
+    #general_upload_area:hover .image-overlay,
+    #login_upload_area:hover .image-overlay {
+        opacity: 1;
+    }
+
+    /* Shop Toggle Switch Styles */
+    .shop-toggle-container {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem 1rem;
+        background: #f8f9fa;
+        border-radius: 12px;
+        border: 2px solid var(--primary-color);
+        transition: all 0.3s ease;
+    }
+
+    .shop-toggle-container:hover {
+        background: #e9ecef;
+        border-color: #28a745;
+    }
+
+    .shop-toggle-label {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        cursor: pointer;
+        margin: 0;
+        font-weight: 700;
+        color: {{ customization.header_font_color|default:"#000000" }};
+    }
+
+    .shop-status-text {
+        font-family: "{{ customization.header_font_family|default:"Arial" }}";
+        font-size: 1rem;
+        transition: color 0.3s ease;
+    }
+
+    .toggle-switch {
+        position: relative;
+        width: 60px;
+        height: 30px;
+    }
+
+    .toggle-switch input[type="checkbox"] {
+        opacity: 0;
+        width: 0;
+        height: 0;
+        position: absolute;
+    }
+
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #dc3545;
+        border-radius: 30px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 24px;
+        width: 24px;
+        left: 3px;
+        top: 3px;
+        background-color: white;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    /* When toggle is ON (Shop Open) */
+    .toggle-switch input:checked + .toggle-slider {
+        background-color: #28a745;
+    }
+
+    .toggle-switch input:checked + .toggle-slider:before {
+        transform: translateX(30px);
+    }
+
+    /* Status text color changes */
+    .toggle-switch input:checked ~ .shop-status-text,
+    .toggle-switch input:checked + .toggle-slider + .shop-status-text {
+        color: #28a745;
+    }
+
+    .toggle-switch input:not(:checked) ~ .shop-status-text,
+    .toggle-switch input:not(:checked) + .toggle-slider + .shop-status-text {
+        color: #dc3545;
+    }
+
+    /* Hover effects */
+    .toggle-switch:hover .toggle-slider {
+        box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+    }
+
+    .toggle-switch input:checked:hover + .toggle-slider {
+        background-color: #218838;
+    }
+
+    .toggle-switch input:not(:checked):hover + .toggle-slider {
+        background-color: #c82333;
+    }
+
+    /* Focus styles for accessibility */
+    .toggle-switch input:focus + .toggle-slider {
+        outline: 2px solid transparent;
+        outline-offset: 2px;
+    }
+
+    /* Optional: Add icons to the toggle */
+    .toggle-slider:after {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 12px;
+        transition: opacity 0.3s ease;
+    }
+
+    .toggle-switch input:checked + .toggle-slider:after {
+        left: 8px;
+        right: auto;
+    }
+
+    </style>
+
+</head>
+<body>
+<div class="main-container">
+    <form method="POST" action="{% url 'settings' %}" enctype="multipart/form-data" id="settingsForm">
+        {% csrf_token %}
+
+        <div class="main-container">
+            <form method="POST" action="{% url 'settings' %}" enctype="multipart/form-data" id="settingsForm">
+                {% csrf_token %}
+        
+               <!-- 🔘 Close/Open Shop Toggle -->
+                <div class="d-flex justify-content-start mb-3">
+                    <div class="shop-toggle-container">
+                        <label class="shop-toggle-label">
+                            <span class="shop-status-text">
+                                {% if business.force_closed %}Shop Closed{% else %}Shop Open{% endif %}
+                            </span>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="toggleShopBtn" {% if not business.force_closed %}checked{% endif %}>
+                                <span class="toggle-slider"></span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+          
+        
+        
+        <!-- Business Profile Card -->
+        <div class="settings-card">
+            <div class="card-header d-flex flex-wrap justify-content-between align-items-center">
+                <h2 class="card-title d-flex align-items-center mb-0 mb-md-0">
+                    <i class="fas fa-building me-2"></i>
+                    Business Profile
+                </h2>
+                <div class="d-flex gap-2">
+                    <button type="button" class="save-button" id="editDetails">
+                        <i class="fas fa-pen"></i> Edit Details
+                    </button>
+                    <button type="submit" class="save-button" id="saveDetails" disabled>
+                        <i class="fas fa-save"></i> Save Details
+                    </button>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="row g-4">
+                    <!-- Logo Upload Section -->
+                    <div class="col-lg-4">
+                        <label class="form-label">Business Logo</label>
+                        
+                        <!-- Square Wrapper Ensures 1:1 Aspect Ratio -->
+                        <div class="square-wrapper">
+                            <div class="logo-upload-area">
+                                {% if business.logo %}
+                                    <img id="logoPreview" src="{{ business.logo.url }}" class="logo-preview">
+                                {% else %}
+                                    <img id="logoPreview" src="" class="logo-preview" style="display:none;">
+                                {% endif %}
+
+                                <div class="upload-placeholder" id="uploadPlaceholder" style="{% if business.logo %}display: none;{% endif %}">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <h4>Upload Logo</h4>
+                                    <p>Drag & drop or click to browse</p>
+                                    <small>PNG, JPG up to 2MB</small>
+                                </div>
+
+
+                                <!-- Make this invisible but clickable -->
+                                <input type="file" id="logoInput" name="logo" accept="image/png,image/jpeg" class="logo-file-input editable-field" disabled>
+                            </div>
+                        </div>
+
+                        <div class="action-buttons mt-3">
+                            <button type="button" class="payment-change w-100" id="changePasswordButton" data-bs-toggle="modal" data-bs-target="#changePasswordModal" disabled>
+                                <i class="fas fa-key"></i> Change Password
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <!-- Business Details -->
+                    <div class="col-lg-8">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="businessName" class="form-label">Business Name</label>
+                                <input type="text" id="businessName" name="business_name" class="form-control editable-field" disabled placeholder="Enter your business name" value="{{ business.business_name|default_if_none:'' }}">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="contactNumber" class="form-label">Contact Number</label>
+                                <input type="tel" id="contactNumber" name="contact_number" class="form-control editable-field" disabled placeholder="+63 xxx xxx xxxx" value="{{ business.contact_number|default_if_none:'' }}">
+                            </div>
+
+                            <div class="col-md-8">
+                                <label for="emailAddress" class="form-label">Email Address</label>
+                                <!-- Display the existing email address of the business owner -->
+                                <input type="email" id="emailAddress" name="email_address" class="form-control editable-field" disabled placeholder="businessowner@gmail.com" value="{{ owner.email|default_if_none:'' }}" readonly>
+                            </div>
+
+                            <!-- Operating Days Section -->
+                            <div class="col-12">
+                                <label class="form-label">Operating Days</label>
+                                <div class="d-flex gap-2 align-items-center">
+                                    <select id="startDay" name="start_day" class="form-select editable-field" disabled>
+                                        <option value="">Start Day</option>
+                                        {% for day in days %}
+                                            <option value="{{ day }}" {% if business.start_day == day %}selected{% endif %}>{{ day }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <span class="time-separator">to</span>
+                                    <select id="endDay" name="end_day" class="form-select editable-field" disabled>
+                                        <option value="">End Day</option>
+                                        {% for day in days %}
+                                            <option value="{{ day }}" {% if business.end_day == day %}selected{% endif %}>{{ day }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Operating Hours Section -->
+                            <div class="col-12">
+                                <label class="form-label">Operating Hours</label>
+                                <div class="d-flex gap-2 align-items-center">
+                                    <input type="time" id="openingTime" name="opening_time" class="form-control editable-field" disabled value="{{ business.opening_time|default_if_none:''|time:'H:i' }}">
+                                    <span class="time-separator">to</span>
+                                    <input type="time" id="closingTime" name="closing_time" class="form-control editable-field" disabled value="{{ business.closing_time|default_if_none:''|time:'H:i' }}">
+                                </div>
+                            </div>
+
+
+
+                            <div class="col-12">
+                                <label for="storeAddress" class="form-label">Store Address</label>
+                                <textarea id="storeAddress" name="store_address" class="form-control editable-field" rows="3" placeholder="House/Building No., Street, Barangay/Subdivision, City/Municipality, Province, ZIP Code" disabled>{{ business.store_address|default_if_none:'' }}</textarea>
+                                <small class="text-muted">Store address will be displayed when Customer Pickup is enabled.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <!-- Service & Payment Configuration -->
+                <h3 class="card-title mb-4">
+                    <i class="fas fa-cogs"></i>
+                    Service & Payment Configuration
+                </h3>
+
+                <div class="row g-4">
+                    <!-- Mode of Service -->
+                    <div class="col-md-6">
+                        <div class="service-section">
+                            <div class="service-title">
+                                <i class="fas fa-truck"></i>
+                                SERVICES OFFERED
+                            </div>
+
+                            <div class="custom-checkbox mb-1">
+                                <input type="checkbox" id="pickup" name="mode_service" value="Pickup" class="editable-field" disabled {% if 'Pickup' in business.services_offered %}checked{% endif %}>
+                                <label for="pickup">
+                                    <i class="fas fa-hand-holding"></i>
+                                    Customer Pickup
+                                </label>
+                            </div>
+
+                            <div class="custom-checkbox mb-1">
+                                <input type="checkbox" id="delivery" name="mode_service" value="Delivery" class="editable-field" disabled {% if 'Delivery' in business.services_offered %}checked{% endif %}>
+                                <label for="delivery">
+                                    <i class="fas fa-shipping-fast"></i>
+                                    Home Delivery
+                                </label>
+                            </div>
+
+                            <div class="custom-checkbox mb-1">
+                                <input type="checkbox" id="scheduled" name="mode_service" value="Scheduled" 
+                                    class="editable-field" disabled 
+                                    {% if 'Scheduled' in business.services_offered %}checked{% endif %}>
+                                <label for="scheduled">
+                                    <i class="fas fa-clock"></i>
+                                    Scheduled Order
+                                </label>
+                            </div>
+
+
+                            <div class="custom-checkbox mb-1">
+                                <input type="checkbox" id="onsite" name="mode_service" value="OnSite" 
+                                    class="editable-field" disabled 
+                                    {% if 'OnSite' in business.services_offered %}checked{% endif %}>
+                                <label for="onsite">
+                                    <i class="fas fa-tools"></i>
+                                    On-site Service
+                                </label>
+                            </div>
+
+                            <!-- Extra Services Container (hidden by default) -->
+                            <div id="onsiteServicesWrapper" style="display: none; margin-left: 30px;">
+                                <button type="button" id="addServiceBtn" class="btn btn-outline-primary btn-sm mb-2 mt-2" style="width:100%" disabled>
+                                    <i class="fas fa-plus"></i> Add Specific Service
+                                </button>
+                                <div id="onsiteServicesList">
+                                    {% for service in specific_services_list %}
+                                        <div class="input-group mb-2">
+                                            <input type="text" name="specific_services[]" value="{{ service }}" class="form-control editable-field" disabled>
+                                            <button type="button" class="btn btn-danger removeServiceBtn">&times;</button>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                    <!-- Payment Methods -->
+                    <div class="col-md-6">
+                        <div class="service-section">
+                            <div class="service-title">
+                                <i class="fas fa-credit-card"></i>
+                                MODE OF PAYMENT
+                            </div>
+                            
+                            <div class="custom-checkbox mb-2">
+                                <input type="checkbox" id="cash" name="payment_method" value="Cash" class="editable-field" disabled {% if 'Cash' in business.payment_methods %}checked{% endif %}>
+                                <label for="cash">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    Cash Payment
+                                </label>
+                            </div>
+
+                            <div class="custom-checkbox mb-2">
+                                <input type="checkbox" id="online" name="payment_method" value="Online Payment" class="editable-field" disabled {% if 'Online Payment' in business.payment_methods %}checked{% endif %}>
+                                <label for="online">
+                                    <i class="fas fa-globe"></i>
+                                    Online Payment
+                                </label>
+                            </div>
+
+                            <div class="action-grid mt-3">
+                                <a href="{% url 'online_payment_details' %}" id="setupPaymentBtn" class="payment-change d-flex justify-content-center align-items-center">
+                                    <i class="fas fa-credit-card"></i>
+                                    Setup Online Payment Method
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>    
+
+
+
+{% include 'MSMEOrderingWebApp/customize_sec.html' %}
+
+<!--CHange Pass Modal -->
+<div class="modal fade modal-modern" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <form method="post" action="{% url 'business_changepassword' %}">
+        {% csrf_token %}
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
+        </div>
+
+        <div class="modal-body">
+          <!-- Current Password -->
+        <div class="mb-1">
+            <label for="current_password" class="form-label fw-bold">Current Password</label>
+            <div class="password-group">
+                <input type="password" id="current_password" name="current_password" class="form-control" required>
+                <span class="input-group-text password-toggle">
+                    <i class="fas fa-eye toggle-password" data-target="current_password"></i>
+                </span>
+            </div>
+        </div>
+
+
+          <!-- New Password -->
+        <div class="mb-1">
+            <label for="new_password" class="form-label fw-bold">New Password</label>
+            <div class="password-group">
+              <input type="password" id="new_password" name="new_password" class="form-control" required>
+              <span class="input-group-text password-toggle">
+                <i class="fas fa-eye toggle-password" data-target="new_password"></i>
+              </span>
+            </div>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="mb-1">
+            <label for="confirm_password" class="form-label fw-bold">Confirm New Password</label>
+            <div class="password-group">
+              <input type="password" id="confirm_password" name="confirm_password" class="form-control" required>
+              <span class="input-group-text password-toggle">
+                <i class="fas fa-eye toggle-password" data-target="confirm_password"></i>
+              </span>
+            </div>
+            <small class="form-text text-muted">
+              Password must be at least 8 characters long, and include letters, numbers, and special characters.
+            </small>
+          </div>
+        </div>
+  
+        <div class="modal-footer">
+          <button type="submit" class="save-button">Save</button>
+          <button type="button" class="save-button" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
+
+<!-- Shop Status Modal -->
+<div class="modal fade" id="shopStatusModal" tabindex="-1" aria-labelledby="shopStatusLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modal-modern">
+      <div class="modal-header">
+        <h5 class="modal-title" id="shopStatusLabel">Shop Status</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="shopStatusMessage">
+        <!-- JS will inject the text here -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const onsiteCheckbox = document.getElementById("onsite");
+    const wrapper = document.getElementById("onsiteServicesWrapper");
+    const addServiceBtn = document.getElementById("addServiceBtn");
+    const serviceList = document.getElementById("onsiteServicesList");
+    const logoInput = document.getElementById("logoInput");
+    const logoPreview = document.getElementById("logoPreview");
+    const uploadPlaceholder = document.getElementById("uploadPlaceholder");
+    const settingsForm = document.getElementById("settingsForm");
+    const editButton = document.getElementById("editDetails");
+    const saveButton = document.getElementById("saveDetails");
+    
+    // Track if we're currently restoring to prevent conflicts
+    let isRestoring = false;
+    
+    console.log('=== SETTINGS SCRIPT LOADED ===');
+    
+    // ---------- Functions ----------
+
+    function showToast(message, type = 'info') {
+        let toastContainer = document.getElementById('toast-container');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.id = 'toast-container';
+            toastContainer.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+            `;
+            document.body.appendChild(toastContainer);
+        }
+        const toast = document.createElement('div');
+        toast.className = `alert alert-${type} alert-dismissible fade show`;
+        toast.style.cssText = 'margin-bottom: 10px; min-width: 300px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);';
+        toast.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        toastContainer.appendChild(toast);
+        setTimeout(() => toast.remove(), 5000);
+    }
+
+    // SAFE field restoration - avoids file inputs completely
+    function safeRestoreFields() {
+        console.log('🔄 Restoring editable fields...');
+        let restoredCount = 0;
+
+        const allFields = [
+            ...Array.from(document.getElementsByTagName('input')),
+            ...Array.from(document.getElementsByTagName('textarea')),
+            ...Array.from(document.getElementsByTagName('select'))
+        ];
+
+        allFields.forEach(field => {
+            if (!field.classList.contains('editable-field')) return;
+            if (!field.name || field.name.trim() === '') return;
+
+            try {
+                const key = field.id || field.name;
+
+                if (field.type === 'checkbox' || field.type === 'radio') {
+                    const savedValue = localStorage.getItem(key);
+                    if (savedValue !== null) {
+                        field.checked = savedValue === 'true';
+                        console.log(`🔄 Restored checkbox/radio ${key}: ${field.checked}`);
+                        restoredCount++;
+                    }
+                } else if (field.type !== 'file') {
+                    const savedValue = localStorage.getItem(key);
+                    if (savedValue !== null) {
+                        field.value = savedValue;
+                        console.log(`🔄 Restored field ${key}: "${field.value}"`);
+                        restoredCount++;
+                    }
+                }
+            } catch (error) {
+                console.error(`❌ Error restoring field ${field.name}:`, error);
+            }
+        });
+
+        // Restore services list separately
+        const savedServices = JSON.parse(localStorage.getItem('specific_services') || '[]');
+        if (serviceList) {
+            serviceList.innerHTML = '';
+            savedServices.forEach(service => {
+                if (service && service.trim()) addServiceInput(service);
+            });
+            console.log(`🔄 Restored ${savedServices.length} services`);
+        }
+
+        // Restore onsite checkbox visibility
+        if (onsiteCheckbox && wrapper) {
+            wrapper.style.display = onsiteCheckbox.checked ? 'block' : 'none';
+        }
+
+        console.log(`✅ Restored ${restoredCount} fields`);
+        return restoredCount;
+    }
+
+    function saveEditableFields() {
+        if (isRestoring) return;
+        console.log('💾 Saving editable fields...');
+
+        const allFields = [
+            ...Array.from(document.getElementsByTagName('input')),
+            ...Array.from(document.getElementsByTagName('textarea')),
+            ...Array.from(document.getElementsByTagName('select'))
+        ];
+
+        allFields.forEach(field => {
+            if (!field.classList.contains('editable-field')) return;
+            if (!field.name || field.name.trim() === '') return;
+
+            try {
+                // Use unique key: prefer ID, fallback to name
+                const key = field.id || field.name;
+
+                if (field.type === 'checkbox' || field.type === 'radio') {
+                    localStorage.setItem(key, field.checked);
+                    console.log(`💾 Saved checkbox/radio ${key}: ${field.checked}`);
+                } else if (field.type !== 'file') {
+                    localStorage.setItem(key, field.value);
+                    console.log(`💾 Saved field ${key}: "${field.value}"`);
+                }
+            } catch (error) {
+                console.error(`❌ Error saving field ${field.name}:`, error);
+            }
+        });
+
+        // Save dynamic services separately
+        saveServices();
+        console.log('✅ All editable fields saved');
+        }
+
+        function saveServices() {
+            if (isRestoring) return;
+
+            const services = [];
+            if (serviceList) {
+                serviceList.querySelectorAll('input[name="specific_services[]"]').forEach(inp => {
+                    const val = inp.value.trim();
+                    if (val && !services.includes(val)) {
+                        services.push(val);
+                    }
+                });
+            }
+            localStorage.setItem('specific_services', JSON.stringify(services));
+            console.log(`💾 Saved ${services.length} services:`, services);
+        }
+
+    function addServiceInput(value = '') {
+        if (!serviceList) return;
+        
+        const inputGroup = document.createElement("div");
+        inputGroup.classList.add("input-group", "mb-2");
+        inputGroup.innerHTML = `
+            <input type="text" name="specific_services[]" class="form-control editable-field" placeholder="Enter service name" value="${value}">
+            <button type="button" class="btn btn-danger removeServiceBtn">
+                <i class="fas fa-trash"></i>
+            </button>
+        `;
+        serviceList.appendChild(inputGroup);
+
+        const removeBtn = inputGroup.querySelector(".removeServiceBtn");
+        const input = inputGroup.querySelector('input');
+        
+        removeBtn.addEventListener("click", function () {
+            inputGroup.remove();
+            saveServices();
+        });
+
+        input.addEventListener('input', function() {
+            if (!isRestoring) {
+                saveServices();
+            }
+        });
+        
+        // Apply current edit mode state to new elements
+        const isEditing = localStorage.getItem('settings_edit_mode') === 'true';
+        input.disabled = !isEditing;
+        removeBtn.disabled = !isEditing;
+        removeBtn.style.pointerEvents = isEditing ? 'auto' : 'none';
+        removeBtn.style.opacity = isEditing ? '1' : '0.5';
+    }
+
+    function toggleEditMode(isEditing) {
+        console.log(`🔄 Toggle edit mode: ${isEditing}`);
+
+        const allFields = [
+            ...Array.from(document.getElementsByTagName('input')),
+            ...Array.from(document.getElementsByTagName('textarea')),
+            ...Array.from(document.getElementsByTagName('select'))
+        ];
+
+        allFields.forEach(field => {
+            if (field.classList.contains('editable-field')) {
+                // ✅ Allow file inputs to toggle too
+                field.disabled = !isEditing;
+            }
+        });
+
+        // ✅ Specifically enable/disable logo upload
+        if (logoInput) {
+            logoInput.disabled = !isEditing;
+            logoInput.style.pointerEvents = isEditing ? 'auto' : 'none';
+            logoInput.style.opacity = isEditing ? '1' : '0.5';
+        }
+        
+        // Update service buttons
+        document.querySelectorAll('.removeServiceBtn').forEach(btn => {
+            btn.disabled = !isEditing;
+            btn.style.pointerEvents = isEditing ? 'auto' : 'none';
+            btn.style.opacity = isEditing ? '1' : '0.5';
+        });
+        
+        // Update add service button
+        if (addServiceBtn) {
+            addServiceBtn.disabled = !isEditing;
+            addServiceBtn.style.pointerEvents = isEditing ? 'auto' : 'none';
+            addServiceBtn.style.opacity = isEditing ? '1' : '0.5';
+        }
+        
+        // Update save button
+        if (saveButton) {
+            saveButton.disabled = !isEditing;
+        }
+
+        // Update change password button
+        const changePasswordButton = document.getElementById("changePasswordButton");
+        if (changePasswordButton) {
+            changePasswordButton.disabled = !isEditing;
+            changePasswordButton.style.pointerEvents = isEditing ? 'auto' : 'none';
+            changePasswordButton.style.opacity = isEditing ? '1' : '0.5';
+        }
+        
+        // Update edit button state
+        if (editButton) {
+            if (isEditing) {
+                editButton.disabled = true;
+                editButton.innerText = 'Editing';
+            } else {
+                editButton.disabled = false;
+                editButton.innerText = 'Edit Details';
+            }
+        }
+        
+        // Save edit mode state
+        if (!isRestoring) {
+            localStorage.setItem('settings_edit_mode', isEditing ? 'true' : 'false');
+        }
+    }
+
+    // ---------- COMPLETE STATE RESTORATION ----------
+    function restoreCompleteState() {
+        console.log('🚀 Starting complete state restoration...');
+        console.log('📦 LocalStorage contents:', {
+            logo_preview: !!localStorage.getItem('logo_preview'),
+            settings_edit_mode: localStorage.getItem('settings_edit_mode'),
+            specific_services: localStorage.getItem('specific_services')
+        });
+        
+        isRestoring = true;
+        
+        try {
+            // Step 1: Clear existing dynamic content
+            if (serviceList) {
+                serviceList.innerHTML = '';
+                console.log('🧹 Cleared existing services');
+            }
+            
+            // Step 2: Restore form fields using SAFE method
+            const restoredFields = safeRestoreFields();
+            
+            // Step 3: Handle onsite checkbox specifically
+            if (onsiteCheckbox && wrapper) {
+                wrapper.style.display = onsiteCheckbox.checked ? 'block' : 'none';
+                console.log(`🏢 Onsite services: ${onsiteCheckbox.checked ? 'enabled' : 'disabled'}`);
+            }
+
+            // Step 4: Restore services
+            if (serviceList) serviceList.innerHTML = ''; // Clear existing
+            const savedServices = JSON.parse(localStorage.getItem('specific_services') || '[]');
+            savedServices.forEach(service => {
+                if (service && service.trim()) addServiceInput(service);
+            });
+            console.log(`📋 Restored ${savedServices.length} services`);
+
+            // Step 5: Restore edit mode
+            const savedEditMode = localStorage.getItem('settings_edit_mode') === 'true';
+            const sessionEditMode = sessionStorage.getItem('returnToSettingsEditMode') === 'true';
+            const shouldBeEditing = savedEditMode || sessionEditMode;
+            
+            console.log(`✏️ Edit mode - saved: ${savedEditMode}, session: ${sessionEditMode}, final: ${shouldBeEditing}`);
+            toggleEditMode(shouldBeEditing);
+            
+            // Clean up session storage
+            if (sessionEditMode) {
+                sessionStorage.removeItem('returnToSettingsEditMode');
+            }
+            
+            // Step 6: Restore logo preview (separate from other fields)
+            const savedLogo = localStorage.getItem('logo_preview');
+            if (savedLogo && logoPreview && uploadPlaceholder && logoInput) {
+                console.log('🖼️ Restoring logo preview...');
+                setTimeout(() => {
+                    logoPreview.src = savedLogo;
+                    logoPreview.style.display = 'block';
+                    uploadPlaceholder.style.display = 'none';
+
+                    // Make the file input clickable over the logo
+                    logoInput.style.position = 'absolute';
+                    logoInput.style.top = '0';
+                    logoInput.style.left = '0';
+                    logoInput.style.width = '100%';
+                    logoInput.style.height = '100%';
+                    logoInput.style.opacity = '0';
+                    logoInput.style.cursor = 'pointer';
+                    
+                    console.log('✅ Logo preview restored and input clickable for replacement');
+                }, 50);
+            }
+
+            
+            console.log('✅ State restoration completed successfully');
+            
+        } catch (error) {
+            console.error('❌ Error during state restoration:', error);
+            console.error('Stack:', error.stack);
+            toggleEditMode(false);
+        } finally {
+            setTimeout(() => {
+                isRestoring = false;
+                console.log('🔓 Restoration guard removed');
+            }, 200);
+        }
+    }
+
+    // ---------- Event Listeners Setup ----------
+    function setupEventListeners() {
+        console.log('🔗 Setting up event listeners...');
+        
+        // Onsite checkbox
+        if (onsiteCheckbox) {
+            onsiteCheckbox.addEventListener("change", function () {
+                if (wrapper) {
+                    wrapper.style.display = this.checked ? "block" : "none";
+                }
+                if (!this.checked && serviceList) {
+                    serviceList.innerHTML = "";
+                    saveServices();
+                }
+                saveEditableFields();
+            });
+        }
+
+        // Add service button
+        if (addServiceBtn) {
+            addServiceBtn.addEventListener("click", () => addServiceInput());
+        }
+
+        // Logo upload
+        if (logoInput) {
+            logoInput.addEventListener('change', function () {
+                const file = this.files[0];
+                if (!file) return;
+
+                console.log('📤 Starting logo upload...');
+                const formData = new FormData();
+                formData.append("logo", file);
+
+                fetch("{% url 'upload_logo' %}", {
+                    method: "POST",
+                    body: formData,
+                    headers: { "X-Requested-With": "XMLHttpRequest" }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    console.log('📤 Upload response:', data);
+                    if (data.success) {
+                        if (logoPreview && uploadPlaceholder) {
+                            logoPreview.src = data.logo_url;
+                            logoPreview.style.display = 'block';
+                            uploadPlaceholder.style.display = 'none';
+                        }
+                        
+                        localStorage.setItem('logo_preview', data.logo_url);
+                        console.log('💾 Logo saved to localStorage');
+                        showToast('Logo uploaded successfully!', 'success');
+                    } else {
+                        showToast('Error uploading logo: ' + data.error, 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Upload error:', error);
+                    showToast('Upload failed. Try again.', 'danger');
+                });
+            });
+        }
+
+        // Edit button
+        if (editButton) {
+            editButton.addEventListener('click', function () {
+                toggleEditMode(true);
+                showToast('Edit mode enabled. Make your changes and click Save Details.', 'info');
+            });
+        }
+
+        // Form field changes
+        const allFields = [
+            ...Array.from(document.getElementsByTagName('input')),
+            ...Array.from(document.getElementsByTagName('textarea')),
+            ...Array.from(document.getElementsByTagName('select'))
+        ];
+        
+        allFields.forEach(field => {
+            if (field.classList.contains('editable-field') && field.type !== 'file') {
+                field.addEventListener('input', saveEditableFields);
+                if (field.type === 'checkbox' || field.type === 'radio') {
+                    field.addEventListener('change', saveEditableFields);
+                }
+            }
+        });
+
+        // Change password modal
+        const changePasswordModal = document.getElementById('changePasswordModal');
+        if (changePasswordModal) {
+            const form = changePasswordModal.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const formData = new FormData(form);
+
+                    fetch(form.action, {
+                        method: "POST",
+                        body: formData,
+                        headers: { "X-Requested-With": "XMLHttpRequest" }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            const modalInstance = bootstrap.Modal.getInstance(changePasswordModalEl);
+                            modalInstance.hide();
+                            form.reset();
+
+                            // Automatically refresh the page after modal hides
+                            setTimeout(() => {
+                                location.reload();
+                            }, 200); // small delay to ensure modal is fully hidden
+                        }
+                    })
+                    .catch(() => showToast("Something went wrong. Please try again.", "danger"));
+                });
+            }
+        }
+
+        // ----------------- Password toggle -----------------
+        document.querySelectorAll('.toggle-password').forEach(toggle => {
+            toggle.addEventListener('click', function () {
+                const targetId = this.dataset.target;
+                const input = document.getElementById(targetId);
+                if (!input) return;
+
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    this.classList.remove('fa-eye');
+                    this.classList.add('fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    this.classList.remove('fa-eye-slash');
+                    this.classList.add('fa-eye');
+                }
+            });
+        });
+
+        // ----------------- Fix modal scroll after close -----------------
+        const changePasswordModalEl = document.getElementById('changePasswordModal');
+        if (changePasswordModalEl) {
+            changePasswordModalEl.addEventListener('hidden.bs.modal', () => {
+                // Remove any leftover backdrops
+                document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+                // Remove scroll lock
+                document.body.classList.remove('modal-open');
+            });
+        }
+
+        // Form submission
+        if (settingsForm) {
+            settingsForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                console.log('📝 Form submitted - saving state...');
+                saveEditableFields();
+                saveServices();
+
+                // Submit the form
+                this.submit();
+
+                // Clean up and reset
+                toggleEditMode(false);
+
+                // Keep specific_services so services remain displayed after save
+                // localStorage.removeItem('specific_services');  <-- REMOVE this line
+
+                const allFields = [
+                    ...Array.from(document.getElementsByTagName('input')),
+                    ...Array.from(document.getElementsByTagName('textarea')),
+                    ...Array.from(document.getElementsByTagName('select'))
+                ];
+
+                allFields.forEach(field => {
+                    if (field.classList.contains('editable-field') && field.type !== 'file' && field.name) {
+                        localStorage.removeItem(field.name);
+                    }
+                });
+
+                localStorage.removeItem('settings_edit_mode');
+                console.log('🧹 Cleaned up localStorage after form submission (except services)');
+            });
+        }
+        
+        console.log('✅ Event listeners setup complete');
+    }
+
+    // ---------- Initialize Everything ----------
+    console.log('🎬 Initializing settings page...');
+    
+    setTimeout(() => {
+        try {
+            setupEventListeners();
+            restoreCompleteState();
+            console.log('🎉 Settings page initialization complete');
+        } catch (error) {
+            console.error('❌ Initialization error:', error);
+        }
+    }, 100);
+    
+});
+</script>
+<script>
+    
+document.addEventListener("DOMContentLoaded", () => {
+    const btn = document.getElementById("toggleShopBtn");
+    const statusModal = new bootstrap.Modal(document.getElementById("shopStatusModal"));
+    const statusMsg = document.getElementById("shopStatusMessage");
+
+    btn.addEventListener("click", () => {
+        fetch("{% url 'toggle_shop_status' %}", {
+            method: "POST",
+            headers: { "X-CSRFToken": "{{ csrf_token }}" }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.force_closed) {
+                btn.textContent = "Open Shop";
+                statusMsg.textContent = "The shop has been CLOSED. Customers won’t be able to place new orders until you reopen.";
+            } else {
+                btn.textContent = "Close Shop";
+                statusMsg.textContent = "The shop is now OPEN and ready to receive customer orders.";
+            }
+            statusModal.show();
+        });
+    });
+});
+
+</script>
+    
+{% endblock %}

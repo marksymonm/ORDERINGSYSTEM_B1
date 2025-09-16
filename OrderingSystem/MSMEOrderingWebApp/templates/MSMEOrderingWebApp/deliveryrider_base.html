@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Rider Panel{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap-icons.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Font Awesome Free (only supports solid and regular limited set) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caudex:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Clash+Grotesk:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Aleo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Arapey:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Brawler:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rokkitt:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    
+    {% load static %}
+    
+    <style>
+        :root {
+            --sidebar-width: 250px;
+            --navbar-height: 70px;
+            --navbar-bg: #ffffff;
+            --content-bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --hover-bg: #f1f1f1;
+            --primary-color: {{ customization.primary_color|default:'#FF5733' }};
+            --secondary-color: {{ customization.secondary_color|default:'#FF5733' }};
+            --accent-color: {{ customization.accent_color|default:'#FF5733' }};
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: transparent;
+            overflow-x: hidden;
+        }
+
+        /* Top Navbar */
+        .top-navbar {
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            height: var(--navbar-height);
+            background-color: var(--navbar-bg);
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1030;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+            transition: left 0.3s ease;
+        }
+
+        .top-navbar.collapsed {
+            left: 80px;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-family: {{ customization.header_font_family|default:"Arial" }};
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .navbar-brand span {
+            display: inline-block;
+        }
+
+        .sidebar.collapsed + .content-wrapper .top-navbar .navbar-brand span {
+            display: none;
+        }
+
+        .navbar-nav {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .navbar-nav a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Hover and Active Style */
+        .navbar-nav a:hover,
+        .navbar-nav a.active {
+            color: var(--primary-color);
+            box-shadow: 0 0 0 3px var(--primary-color), 0 0 8px var(--primary-color);
+            background-color: rgba(255, 255, 255, 0.05);
+            z-index: 2;
+        }
+
+
+        
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            z-index: 1040;
+            transition: width 0.3s ease, transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+
+            {% if customization.navigation_background_type == 'solid' %}
+                background-color: {{ customization.navigation_solid_color|default:"#ffffff" }} !important;
+            {% elif customization.navigation_background_type == 'gradient' %}
+                background: linear-gradient({{ customization.navigation_gradient_direction|default:"to right" }},
+                    {{ customization.navigation_gradient_color_1|default:"#ffffff" }},
+                    {{ customization.navigation_gradient_color_2|default:"#000000" }}) !important;
+                    {{ customization.navigation_gradient_color_3|default:"#000000" }}) !important;
+            {% else %}
+                background-color: #ffffff !important;
+            {% endif %}
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar-header{
+            line-height: 20px;;
+            text-shadow: 2px 2px 5px black;
+            font-family: "{{ customization.header_font_family|default:"Arial" }}";
+            color: {{ customization.header_font_color|default:"#000000" }};
+            font-weight: {% if customization.header_font_style == 'bold' or customization.header_font_style == 'bolditalic' %}700{% else %}normal{% endif %};
+            font-style: {% if customization.header_font_style == 'italic' or customization.header_font_style == 'bolditalic' %}italic{% else %}normal{% endif %};
+
+        }
+        
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #ffffff;
+            font-size: 1.25rem;
+            padding: 15px;
+            border-bottom: 2px solid;
+            border-color: var(--primary-color);
+            cursor: pointer;
+            text-shadow: 1px 1px 6px black;
+        }
+
+        .logo-text {
+            white-space: normal;
+            word-break: break-word;
+            display: block;
+            max-width: 100%;
+            line-height: 1.2;
+        }
+
+
+        .sidebar-logo img {
+            width: auto;
+            height: 50px;
+            transition: width 0.3s ease, height 0.3s ease;
+        }
+
+        .sidebar-logo span {
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            white-space: wrap;
+        }
+
+        .sidebar.collapsed .sidebar-logo img {
+            width: 45px;
+            height: 45px;
+        }
+
+        .sidebar.collapsed .sidebar-logo span {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .sidebar.collapsed .logo-text {
+            visibility: hidden;
+            display: none !important;
+        }
+
+
+        /* Sidebar Navigation */
+        .sidebar-nav {
+            flex: 1;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+
+        .sidebar-nav li {
+            margin: 2px 0;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            font-weight: 600;
+            font-family: {{ customization.header_font_family|default:"Arial" }};
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: {{ customization.navigation_text_color|default:"#000000" }};
+            text-decoration: none;
+            transition: all 0.3s;
+            text-shadow: 2px 2px 5px black;
+
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            border-left: 5px solid;
+            background-color: {{ customization.navigation_hover_color|default:"#a8a8a8" }};
+            border-color: {{ customization.navigation_border_color|default:"#cccccc" }};
+        }
+
+        .sidebar-nav i {
+            font-size: larger;
+            width: 30px;
+            text-align: center;
+            flex-shrink: 0;
+
+        }
+
+        /* Sidebar Footer */
+        .sidebar-footer {
+            padding: 15px 0;
+            border-top: 2px solid;
+            border-color: var(--primary-color);
+        }
+
+        .logout-btn {
+            display: flex;
+            font-weight: 600;
+            font-family: {{ customization.header_font_family|default:"Arial" }};
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: {{ customization.navigation_text_color|default:"#000000" }};
+            text-decoration: none;
+            transition: all 0.3s;
+            text-shadow: 2px 2px 5px black;
+
+        }
+
+        .logout-btn:hover {
+            border-left: 5px solid;
+            background-color: {{ customization.navigation_hover_color|default:"#a8a8a8" }};
+            border-color: {{ customization.navigation_border_color|default:"#cccccc" }};
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--navbar-height);
+            padding: 30px;
+            min-height: calc(100vh - var(--navbar-height));
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-content.collapsed {
+            margin-left: 65px;
+        }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .mobile-menu-btn:hover {
+            color: var(--secondary-color);
+            transition: all 0.3s;
+        }
+
+        /* Sidebar Overlay  for mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1035;
+        }
+
+        /* Hide sidebar labels when collapsed on desktop */
+        .sidebar.collapsed .sidebar-label {
+            display: none !important;
+        }
+
+        .sidebar.collapsed .logout-btn span {
+            display: none !important;
+        }
+
+        /* Responsive Design */
+        
+        /* Tablets and small desktops (768px - 1199px) */
+        @media (min-width: 768px) and (max-width: 1199px) {
+            :root {
+                --sidebar-width: 220px;
+            }
+            
+            .main-content {
+                padding: 25px;
+            }
+            
+            .content-header {
+                font-size: 1.75rem;
+            }
+        }
+
+        /* Mobile devices (max-width: 767px) */
+        @media (max-width: 767px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: var(--sidebar-width);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .sidebar-overlay.show {
+                display: block;
+            }
+
+            .top-navbar {
+                left: 0;
+                padding: 0 15px;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px 15px;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .content-header {
+                font-size: 1.5rem;
+                margin-bottom: 20px;
+            }
+
+            .navbar-brand {
+                font-size: 1.1rem;
+            }
+
+            .navbar-nav {
+                gap: 10px;
+            }
+
+            .navbar-nav a {
+                padding: 6px 8px;
+                font-size: 0.9rem;
+            }
+
+            /* Ensure sidebar is full width on mobile when collapsed state is applied */
+            .sidebar.collapsed {
+                width: var(--sidebar-width);
+                transform: translateX(-100%);
+            }
+
+            .sidebar.collapsed.show {
+                transform: translateX(0);
+            }
+        }
+
+        /* Small mobile devices (max-width: 575px) */
+        @media (max-width: 575px) {
+            .main-content {
+                padding: 15px 10px;
+            }
+
+            .content-header {
+                font-size: 1.25rem;
+            }
+
+            .navbar-brand {
+                font-size: 1rem;
+            }
+
+            .top-navbar {
+                padding: 0 10px;
+            }
+
+            .navbar-nav a span {
+                display: none;
+            }
+
+            .navbar-nav a {
+                padding: 8px;
+            }
+        }
+
+        /* Large screens (min-width: 1200px) */
+        @media (min-width: 1200px) {
+            .main-content {
+                padding: 40px;
+            }
+            
+            .content-header {
+                font-size: 2.25rem;
+            }
+        }
+        
+        
+    </style>
+</head>
+<body>
+    <!-- Top Navbar -->
+    <nav class="top-navbar d-flex justify-content-between align-items-center px-3">
+        <div class="d-flex align-items-center">
+            <button class="btn btn-light d-md-none me-3 mobile-menu-btn p-0 border-0" type="button" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+                {% if business and business.logo %}
+                    <img src="{{ business.logo.url }}" alt="Logo" style="height: 40px; width: auto;">
+                {% else %}
+                    <img src="{% static 'images/logo.png' %}" alt="Logo" style="height: 40px; width: auto;">
+                {% endif %}
+            </button>
+            <div class="navbar-brand"
+                style="font-size: 20px; color: {{ customization.header_font_color|default:"#000000" }};">
+                {% if title %}
+                    {{ title }}
+                {% else %}
+                    Rider Panel
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Right side icons -->
+        <div class="d-flex align-items-center gap-3">
+            <!-- Profile -->
+            <a href="{% url 'staff_profile' %}" 
+            class="{% if request.resolver_match.url_name == 'staff_profile' %}active{% endif %}" 
+            aria-label="Profile">
+                <i class="bi bi-person-circle fs-5"></i>
+            </a>
+        </div>
+    </nav>
+
+
+    <!-- Sidebar Overlay (Mobile) -->
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo" onclick="toggleSidebarDesktop()">
+                {% if business and business.logo %}
+                    <img src="{{ business.logo.url }}" alt="Logo" class="logo-img" />
+                {% else %}
+                    <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo-img" />
+                {% endif %}
+                <span class="logo-text">
+                    {% if business and business.business_name %}
+                        {{ business.business_name }}
+                    {% else %}
+                        Rider Panel
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+    
+
+        <nav class="sidebar-nav">
+            <ul>
+
+                <li><a href="{% url 'deliveryrider_home' %}" class="{% if request.resolver_match.url_name == 'deliveryrider_home' %}active{% endif %}">
+                    <i class="bi bi-truck"></i> 
+                    <span class="sidebar-label">Delivery</span>
+                </a></li>
+
+            </ul>
+        </nav>
+
+        
+        <div class="sidebar-footer">
+            <a href="{% url 'logout' %}" class="logout-btn">
+                <i class="bi bi-box-arrow-right"></i> <span>Log Out</span>
+            </a>
+        </div>
+
+    </aside>
+
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            
+            if (window.innerWidth <= 767) {
+                // Mobile behavior
+                sidebar.classList.toggle('show');
+                overlay.classList.toggle('show');
+            }
+        }
+
+        function toggleSidebarDesktop() {
+            if (window.innerWidth > 767) {
+                // Desktop behavior
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.getElementById('mainContent');
+                const topNavbar = document.querySelector('.top-navbar');
+                
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('collapsed');
+                topNavbar.classList.toggle('collapsed');
+            } else {
+                // On mobile, just toggle the sidebar
+                toggleSidebar();
+            }
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            const mainContent = document.getElementById('mainContent');
+            const topNavbar = document.querySelector('.top-navbar');
+            
+            if (window.innerWidth > 767) {
+                // Desktop mode - remove mobile classes
+                sidebar.classList.remove('show');
+                overlay.classList.remove('show');
+            } else {
+                // Mobile mode - remove desktop collapsed state
+                sidebar.classList.remove('collapsed');
+                mainContent.classList.remove('collapsed');
+                topNavbar.classList.remove('collapsed');
+            }
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            
+            if (window.innerWidth <= 767 && 
+                sidebar.classList.contains('show') && 
+                !sidebar.contains(e.target) && 
+                !mobileMenuBtn.contains(e.target)) {
+                sidebar.classList.remove('show');
+                overlay.classList.remove('show');
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            socket.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+
+                const badge = document.getElementById('notification-badge');
+
+                if (data.type === "send_notification" || data.type === "send_pending_count") {
+                    if (data.count > 0) {
+                        badge.textContent = data.count;
+                        badge.classList.remove('d-none');
+                    } else {
+                        badge.classList.add('d-none');
+                    }
+
+                    const pendingCounter = document.getElementById('pending-counter');
+                    if (pendingCounter) {
+                        pendingCounter.textContent = ''; // repaint
+                        pendingCounter.offsetHeight;
+                        pendingCounter.textContent = data.dashboard_count; // update with total pending
+                    }
+
+                    if (window.location.pathname.includes('BusinessNotifications')) {
+                        fetch('/business/pending-orders/')
+                            .then(response => response.text())
+                            .then(html => {
+                                document.getElementById('pending-orders').innerHTML = html;
+                            });
+                    }
+                }
+            };
+        });
+
+        function updateOrderStatusByCode(orderCode, status) {
+            fetch('/update-order-status/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: JSON.stringify({ order_code: orderCode, status: status })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const modal = new bootstrap.Modal(document.getElementById('statusModal'));
+                const title = document.getElementById('statusModalTitle');
+                const body = document.getElementById('statusModalBody');
+
+                if (data.success) {
+                    title.innerHTML = `<i class="fas fa-check-circle me-2 text-success"></i> Success`;
+                    body.innerHTML = `Order <strong>${status}</strong> successfully!`;
+
+                    // Refresh the table after closing the modal
+                    document.getElementById('statusModal').addEventListener('hidden.bs.modal', function () {
+                        fetch('/partial/pending-orders/')
+                            .then(response => response.text())
+                            .then(html => {
+                                document.getElementById('pending-orders').innerHTML = html;
+                            });
+                    }, { once: true });
+
+                } else {
+                    title.innerHTML = `<i class="fas fa-exclamation-triangle me-2 text-danger"></i> Error`;
+                    body.innerHTML = `Failed to update order: ${data.error || "Unknown error"}`;
+                }
+
+                modal.show();
+            });
+}
+
+        // CSRF helper function
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const badge = document.getElementById('notification-badge');
+        const socket = new WebSocket("ws://" + window.location.host + "/ws/notifications/");
+
+        socket.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            if (data.type === "send_notification") {
+                if (data.count > 0) {
+                    badge.textContent = data.count;
+                    badge.classList.remove('d-none');
+                } else {
+                    badge.classList.add('d-none');
+                }
+            }
+        };
+
+        socket.onclose = function(event) {
+            console.error("WebSocket closed unexpectedly");
+        };
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const proofModal = document.getElementById('proofModal');
+            proofModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const imageUrl = button.getAttribute('data-img-url');
+                const proofImage = proofModal.querySelector('#proofImage');
+                proofImage.src = imageUrl;
+            });
+        });
+
+    </script>
+    
+</body>
+</html>
