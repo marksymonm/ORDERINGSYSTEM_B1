@@ -103,11 +103,17 @@ WSGI_APPLICATION = 'OrderingSystem.wsgi.application'
 # Database
 # --------------------------------------------------
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get("DATABASE_URL"),
-        conn_max_age=600,
-        ssl_require=True
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get('DB_NAME', 'Foodstore'),
+        'USER': os.environ.get('DB_USER', 'Foodstore'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'FOODBUSINESS123'),
+        'HOST': os.environ.get('DB_HOST', 'Foodstore.mysql.pythonanywhere-services.com'),
+        'PORT': os.environ.get('DB_PORT', '3306'),
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+        }
+    }
 }
 
 # --------------------------------------------------
