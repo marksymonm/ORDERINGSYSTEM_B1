@@ -1,4 +1,3 @@
-@@ -1,155 +1,158 @@
 """
 Django settings for OrderingSystem project.
 Modified for Render deployment with Daphne, Channels, and Redis.
