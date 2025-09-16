@@ -20,7 +20,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "insecure-fallback-key")
 
 DEBUG = os.environ.get("DEBUG", "False").lower() in ["true", "1"]
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "orderingsystem-b1.onrender.com").split(",")
 
 # --------------------------------------------------
 # Applications
@@ -85,6 +85,10 @@ MIDDLEWARE = [
 # URLs / Templates
 # --------------------------------------------------
 ROOT_URLCONF = 'OrderingSystem.urls'
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://orderingsystem-b1.onrender.com",
+]
 
 TEMPLATES = [
     {
