@@ -1267,7 +1267,8 @@ def upload_logo(request):
         try:
             business, created = BusinessDetails.objects.get_or_create(id=1)
             business.logo = request.FILES['logo']
-            business.save(update_fields=['logo'])  # only update logo
+            print("Saving to:", business.logo.path)  # check this path
+            business.save(update_fields=['logo'])
             return JsonResponse({
                 'success': True,
                 'logo_url': business.logo.url
@@ -1275,6 +1276,7 @@ def upload_logo(request):
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)})
     return JsonResponse({'success': False, 'error': 'Invalid request'})
+
 
 @login_required_session
 def change_owner_password(request):
