@@ -50,8 +50,13 @@ tzdata==2025.2
 viivakoodi==0.8.0
 zope.interface==7.2
 dj-database-url
+daphne
+channels
+channels-redis
+mysqlclient   # or pymysql depending on what you use
 
 channels_redis
+
 
 
 
