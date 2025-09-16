@@ -5399,3 +5399,13 @@ def show_review(request, review_id):
             return JsonResponse({'status': 'error', 'message': 'Review not found.'})
     return JsonResponse({'status': 'error', 'message': 'Invalid method'})
 
+
+
+ def test_db_connection(request):
+    try:
+        count = User.objects.count()
+        return HttpResponse(f"Database is connected. Users in DB: {count}")
+    except Exception as e:
+        return HttpResponse(f"Database connection failed: {e}")
+
+
