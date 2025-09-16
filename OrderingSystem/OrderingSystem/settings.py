@@ -86,9 +86,6 @@ MIDDLEWARE = [
 # --------------------------------------------------
 ROOT_URLCONF = 'OrderingSystem.urls'
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://orderingsystem-b1.onrender.com",
-]
 
 TEMPLATES = [
     {
