@@ -344,10 +344,7 @@ class Customization(models.Model):
     general_solid_color = models.CharField(max_length=7, default='#ffffff')
     general_gradient_color_1 = models.CharField(max_length=7, default='#ffffff')
     general_gradient_color_2 = models.CharField(max_length=7, default='#000000')
-    general_gradient_color_3 = models.CharField(max_length=7, null=True, blank=True)
     general_gradient_direction = models.CharField(max_length=20, default='to right')
-    general_radial_shape = models.CharField(max_length=20, null=True, blank=True)
-    general_radial_position = models.CharField(max_length=20, null=True, blank=True)
     general_background_image = models.ImageField(upload_to='backgrounds/', null=True, blank=True)
 
     # Login-specific Background Settings
@@ -355,10 +352,7 @@ class Customization(models.Model):
     login_solid_color = models.CharField(max_length=7, default='#ffffff')
     login_gradient_color_1 = models.CharField(max_length=7, default='#ffffff')
     login_gradient_color_2 = models.CharField(max_length=7, default='#000000')
-    login_gradient_color_3 = models.CharField(max_length=7, null=True, blank=True)
     login_gradient_direction = models.CharField(max_length=20, default='to right')
-    login_radial_shape = models.CharField(max_length=20, null=True, blank=True)
-    login_radial_position = models.CharField(max_length=20, null=True, blank=True)
     login_background_image = models.ImageField(upload_to='backgrounds/', null=True, blank=True)
 
     # Register-specific Background Settings
@@ -366,15 +360,12 @@ class Customization(models.Model):
     register_solid_color = models.CharField(max_length=7, default='#ffffff')
     register_gradient_color_1 = models.CharField(max_length=7, default='#ffffff')
     register_gradient_color_2 = models.CharField(max_length=7, default='#000000')
-    register_gradient_color_3 = models.CharField(max_length=7, null=True, blank=True)
     register_gradient_direction = models.CharField(max_length=20, default='to right')
-    register_radial_shape = models.CharField(max_length=20, null=True, blank=True)
-    register_radial_position = models.CharField(max_length=20, null=True, blank=True)
     register_background_image = models.ImageField(upload_to='backgrounds/', null=True, blank=True)
 
     # Font Settings (Shared by all modules)
     header_font_family = models.CharField(max_length=50, default='Arial')
-    header_font_size = models.IntegerField(default=24)
+    header_font_size = models.IntegerField(default=25)
     header_font_color = models.CharField(max_length=7, default='#000000')
     header_font_style = models.CharField(max_length=20, default='normal')
     
@@ -387,21 +378,20 @@ class Customization(models.Model):
     navigation_solid_color = models.CharField(max_length=7, default='#ffffff')
     navigation_gradient_color_1 = models.CharField(max_length=7, default='#ffffff')
     navigation_gradient_color_2 = models.CharField(max_length=7, default='#000000')
-    navigation_gradient_color_3 = models.CharField(max_length=7, null=True, blank=True)
     navigation_gradient_direction = models.CharField(max_length=20, default='to right')
     navigation_radial_shape = models.CharField(max_length=20, null=True, blank=True)
     navigation_radial_position = models.CharField(max_length=20, null=True, blank=True)
 
     # Navigation Text, Hover, and Border Color Settings
     navigation_text_color = models.CharField(max_length=7, default='#000000')
-    navigation_hover_color = models.CharField(max_length=7, default='#a8a8a8')
-    navigation_border_color = models.CharField(max_length=7, default='#cccccc')
+    navigation_hover_color = models.CharField(max_length=7, default='#D3D3D3')
+    navigation_border_color = models.CharField(max_length=7, default='#808080')
 
     # New Fields Added
     input_rounded_corner = models.IntegerField(default=1)  # Rounding of input corners
-    primary_color = models.CharField(max_length=7, default='#0000EE')  # Primary color
-    secondary_color = models.CharField(max_length=7, default='#FF5733')  # Secondary color
-    accent_color = models.CharField(max_length=7, default='#FF5733')  # Accent color
+    primary_color = models.CharField(max_length=7, default='#ffffff')  # Primary color
+    secondary_color = models.CharField(max_length=7, default='#000000')  # Secondary color
+    accent_color = models.CharField(max_length=7, default='#808080')  # Accent color
     button_rounded_corner = models.IntegerField(default=1)  # Rounding of button corners
     button_text_color = models.CharField(max_length=7, default='#ffffff')
     input_border_width = models.IntegerField(default=1)
