@@ -4,6 +4,8 @@ Modified for Render deployment with Daphne, Channels, and Redis.
 """
 
 import os
+import dj_database_url  
+import redis
 from pathlib import Path
 
 # --------------------------------------------------
@@ -50,7 +52,7 @@ if REDIS_URL:
         "default": {
             "BACKEND": "channels_redis.core.RedisChannelLayer",
             "CONFIG": {
-                "hosts": [REDIS_URL],
+                "hosts": [os.environ.get("REDIS_URL", "redis://red-d34h8numcj7s73cscpc0:6379/0")],
             },
         },
     }
